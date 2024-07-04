@@ -1,12 +1,21 @@
-import { View } from "react-native"
+import { useRef } from "react"
+import { router } from "expo-router"
+import { Text, View } from "react-native"
+import BottomS from "@gorhom/bottom-sheet"
 
 import { Goals } from "@/components/Goals"
 import { Header } from "@/components/Header"
 import { Button } from "@/components/Button"
+import { BottomSheet } from "@/components/BottomSheet"
 import { Transactions } from "@/components/Transactions"
-import { router } from "expo-router"
+import { Input } from "@/components/Input"
 
 export default function Home() {
+  const bottomSheetRef = useRef<BottomS>(null)
+
+  const handleBottomSheetOpen = () => bottomSheetRef.current?.expand()
+  const handleBottomSheetClose = () => bottomSheetRef.current?.snapToIndex(0)
+
   function handleOpenDetails(id: string) {
     router.navigate(`/details/${id}`)
   }
@@ -20,7 +29,19 @@ export default function Home() {
 
       <Goals />
       <Transactions onPress={(id) => handleOpenDetails(id)} />
-      <Button title="Criar meta" />
+      <Button title="Criar meta" onPress={handleBottomSheetOpen} />
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        title="Nova Meta"
+        snapPoints={[0.01, 284]}
+        onClose={handleBottomSheetClose}
+      >
+        <Input placeholder="Nome da meta" />
+        <Input placeholder="Valor" keyboardType="numeric" />
+        <Button title="Criar" onPress={() => { }} />
+      </BottomSheet>
+
     </View>
   )
 }
