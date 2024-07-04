@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
   },
   text: {
-    color: theme.colors.white,
+    color: theme.colors.black,
     fontSize: theme.fonts.size.body.sm,
     fontFamily: theme.fonts.family.semiBold,
     textTransform: "uppercase",

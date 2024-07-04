@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
   list: {
     width: "100%",
     maxHeight: 164,
-    marginBottom: 42,
   },
   add: {
     backgroundColor: theme.colors.orange_500,
