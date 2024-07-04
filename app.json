@@ -19,7 +19,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0E0F11"
-      }
+      },
+      "backgroundColor": "#0E0F11",
+      "package": "com.carlosedilsonjr.mygoals"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +34,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "042294aa-b086-4c78-add6-0c808b64727d"
+      }
     }
   }
 }

@@ -1,11 +1,11 @@
 import React, { ReactNode, forwardRef } from "react"
 import { Text, View } from "react-native"
-import Bottom from "@gorhom/bottom-sheet"
+import Bottom, { BottomSheetProps } from "@gorhom/bottom-sheet"
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 
 import { colors } from "@/styles/colors"
 
-export type Props = {
+export type Props = BottomSheetProps & {
   onClose: () => void
   title: string
   children: ReactNode
@@ -13,7 +13,7 @@ export type Props = {
 }
 
 export const BottomSheet = forwardRef<Bottom, Props>(
-  ({ onClose, children, snapPoints, title }, ref) => {
+  ({ onClose, children, snapPoints, title, ...rest }, ref) => {
     return (
       <Bottom
         ref={ref}
@@ -25,6 +25,7 @@ export const BottomSheet = forwardRef<Bottom, Props>(
           backgroundColor: colors.gray[700],
         }}
         handleComponent={() => null}
+        {...rest}
       >
         <View className="p-8 gap-4">
           <View className="flex-row">
