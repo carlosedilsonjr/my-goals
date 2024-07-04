@@ -1,5 +1,7 @@
+import "@/libs/dayjs"
 import { Slot } from "expo-router"
 import { StatusBar } from "expo-status-bar"
+import { SQLiteProvider } from 'expo-sqlite/next'
 import * as SplashScreen from "expo-splash-screen"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
@@ -9,6 +11,8 @@ import {
   OpenSans_400Regular,
   OpenSans_600SemiBold,
 } from "@expo-google-fonts/open-sans"
+
+import { databaseInit } from "@/database/databaseInit"
 
 import { theme } from "@/theme"
 import { Text } from "react-native"
@@ -33,8 +37,9 @@ export default function Layout() {
       style={{ flex: 1, backgroundColor: theme.colors.gray_600 }}
     >
       <StatusBar style="light" />
-      <Slot />
-      <Text>AAAAAAAAAAAAAAAa</Text>
+      <SQLiteProvider databaseName="mygoals.db" onInit={databaseInit}>
+        <Slot />
+      </SQLiteProvider>
     </GestureHandlerRootView>
   )
 }

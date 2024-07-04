@@ -1,24 +1,88 @@
-import { useRef } from "react"
-import { View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Alert, Keyboard, View } from "react-native"
+import Bottom from "@gorhom/bottom-sheet"
 import { router } from "expo-router"
-import BottomS from "@gorhom/bottom-sheet"
+import dayjs from "dayjs"
 
-import { Goals } from "@/components/Goals"
+import { useGoalRepository } from "@/database/useGoalRepository"
+import { useTransactionRepository } from '@/database/useTransactionRepository';
+
 import { Input } from "@/components/Input"
 import { Header } from "@/components/Header"
 import { Button } from "@/components/Button"
 import { BottomSheet } from "@/components/BottomSheet"
-import { Transactions } from "@/components/Transactions"
+import { Goals, GoalsProps } from "@/components/Goals"
+import { Transactions, TransactionsProps } from "@/components/Transactions"
 
 export default function Home() {
-  const bottomSheetRef = useRef<BottomS>(null)
+  const [transactions, setTransactions] = useState<TransactionsProps>([])
+  const [goals, setGoals] = useState<GoalsProps>([])
+  const [name, setName] = useState("")
+  const [total, setTotal] = useState("")
 
+  const useGoal = useGoalRepository()
+  const useTransaction = useTransactionRepository()
+
+  const bottomSheetRef = useRef<Bottom>(null)
   const handleBottomSheetOpen = () => bottomSheetRef.current?.expand()
   const handleBottomSheetClose = () => bottomSheetRef.current?.snapToIndex(0)
 
-  function handleOpenDetails(id: string) {
+  function handleDetails(id: string) {
     router.navigate(`/details/${id}`)
   }
+
+  async function handleCreate() {
+    try {
+      const totalAsNumber = Number(total.toString().replace(",", "."))
+
+      if (isNaN(totalAsNumber)) {
+        return Alert.alert("Erro", "Valor inválido.")
+      }
+
+      useGoal.create({ name, total: totalAsNumber })
+
+      fetchGoals()
+
+      Keyboard.dismiss()
+      handleBottomSheetClose()
+      Alert.alert("Sucesso", "Meta cadastrada!")
+
+      setName("")
+      setTotal("")
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível cadastrar.")
+      console.log(error)
+    }
+  }
+
+  async function fetchGoals() {
+    try {
+      const response = useGoal.all()
+
+      setGoals(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function fetchTransactions() {
+    try {
+      const response = useTransaction.findLatest()
+      setTransactions(
+        response.map((item) => ({
+          ...item,
+          date: dayjs(item.created_at).format("DD/MM/YYYY [às] HH:mm"),
+        }))
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchGoals()
+    fetchTransactions()
+  }, [])
 
   return (
     <View style={{ flex: 1, padding: 32 }}>
@@ -27,9 +91,13 @@ export default function Home() {
         subtitle="Poupe hoje para colher os frutos amanhã."
       />
 
-      <Goals />
-      <Transactions onPress={(id) => handleOpenDetails(id)} />
-      <Button title="Criar meta" onPress={handleBottomSheetOpen} />
+      <Goals
+        goals={goals}
+        onAdd={handleBottomSheetOpen}
+        onPress={handleDetails}
+      />
+
+      <Transactions transactions={transactions} />
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -37,9 +105,16 @@ export default function Home() {
         snapPoints={[0.01, 284]}
         onClose={handleBottomSheetClose}
       >
-        <Input placeholder="Nome da meta" />
-        <Input placeholder="Valor" keyboardType="numeric" />
-        <Button title="Criar" onPress={() => { }} />
+        <Input placeholder="Nome da meta" onChangeText={setName} value={name} />
+
+        <Input
+          placeholder="Valor"
+          keyboardType="numeric"
+          onChangeText={setTotal}
+          value={total}
+        />
+
+        <Button title="Criar" onPress={handleCreate} />
       </BottomSheet>
 
     </View>

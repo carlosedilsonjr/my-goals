@@ -2,29 +2,29 @@ import { FlatList, Text, View } from "react-native"
 
 import { styles } from "./styles"
 
-import { Transaction } from "@/components/Transaction"
+import { Transaction, TransactionProps } from "@/components/Transaction"
+
+export type TransactionsProps = TransactionProps[]
 
 type Props = {
-  onPress?: (id: string) => void
+  transactions: TransactionsProps
 }
 
-export function Transactions({ onPress = () => { } }: Props) {
+export function Transactions({ transactions }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Últimas transações</Text>
 
       <FlatList
-        data={[
-          {
-            id: "1",
-            name: "Notebook",
-            date: "16/03/2024",
-            value: 334.3,
-          },
-        ]}
-        renderItem={({ item }) => <Transaction transaction={item} onPress={() => onPress(item.id)} />}
+        data={transactions}
+        renderItem={({ item }) => <Transaction transaction={item} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <Text style={styles.emptyList}>
+            Nenhuma transação registrada ainda.
+          </Text>
+        )}
       />
     </View>
   )
