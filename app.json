@@ -13,7 +13,8 @@
       "backgroundColor": "#0E0F11"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.carlosedilsonjr.mygoals"
     },
     "android": {
       "adaptiveIcon": {
